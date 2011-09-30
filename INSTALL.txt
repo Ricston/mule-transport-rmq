@@ -1,0 +1,1 @@
+Type 'mvn package' in the project root directory and place the produced 'mule-transport-rmq-[version].jar' in the 'MULE_HOME/lib/user' path.

@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesource.org/schema/mule/core/2.2"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:vm="http://www.mulesource.org/schema/mule/vm/2.2"
+    xmlns:rmq="http://www.mulesource.org/schema/mule/rmq/2.2"
+    xmlns:spring="http://www.springframework.org/schema/beans"
+    xmlns:stdio="http://www.mulesource.org/schema/mule/stdio/2.2"
+    xsi:schemaLocation="
+          http://www.mulesource.org/schema/mule/core/2.2 http://www.mulesource.org/schema/mule/core/2.2/mule.xsd
+          http://www.mulesource.org/schema/mule/rmq/2.2 http://www.mulesource.org/schema/mule/rmq/2.2/mule-rmq.xsd
+          http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+          http://www.mulesource.org/schema/mule/stdio/2.2 http://www.mulesource.org/schema/mule/stdio/2.2/mule-stdio.xsd
+          http://www.mulesource.org/schema/mule/vm/2.2 http://www.mulesource.org/schema/mule/vm/2.2/mule-vm.xsd">
+
+    <rmq:connector name="connector">
+        <spring:property name="connectorURI"
+            value="guest:guest@127.0.0.1:5672" />
+        <spring:property name="springAutoName" value="true" />
+        <spring:property name="exchangeMap">
+            <spring:map>
+                <spring:entry key="pExchange2">
+                    <spring:bean
+                        class="org.mule.transport.rmq.essentials.Exchange">
+                        <spring:property name="type"
+                            value="topic" />
+                        <spring:property name="durable"
+                            value="false" />
+                    </spring:bean>
+                </spring:entry>
+                <spring:entry key="pExchange3">
+                    <spring:bean
+                        class="org.mule.transport.rmq.essentials.Exchange">
+                        <spring:property name="type"
+                            value="topic" />
+                        <spring:property name="durable"
+                            value="false" />
+                    </spring:bean>
+                </spring:entry>
+            </spring:map>
+        </spring:property>
+        <service-overrides
+            messageReceiver="org.mule.transport.rmq.RmqMessagePollingReceiver" />
+    </rmq:connector>
+
+    <endpoint name="inbound_one" address="rmq://pExchange2:pQueue2/#" />
+    <endpoint name="inbound_two" address="rmq://pExchange3:pQueue3/#" />
+
+    <vm:connector name="vmConnector" queueEvents="true" />
+
+    <byte-array-to-string-transformer
+        name="ByteArrayToString" />
+
+    <model name="TestModel">
+
+        <service name="InboundService">
+            <inbound>
+                <vm:inbound-endpoint address="vm://inbound" />
+            </inbound>
+            <outbound>
+                <multicasting-router>
+                    <rmq:outbound-endpoint
+                        address="rmq://pExchange2/#" />
+                    <rmq:outbound-endpoint
+                        address="rmq://pExchange3/#" />
+                </multicasting-router>
+            </outbound>
+        </service>
+
+        <service name="OutboundService1">
+            <inbound>
+                <inbound-endpoint ref="inbound_one" />
+            </inbound>
+            <outbound>
+                <pass-through-router>
+                    <vm:outbound-endpoint address="vm://outbound1"
+                        transformer-refs="ByteArrayToString" />
+                </pass-through-router>
+            </outbound>
+        </service>
+
+        <service name="OutboundService2">
+            <inbound>
+                <inbound-endpoint ref="inbound_two" />
+            </inbound>
+            <outbound>
+                <pass-through-router>
+                    <vm:outbound-endpoint address="vm://outbound2"
+                        transformer-refs="ByteArrayToString" />
+                </pass-through-router>
+            </outbound>
+        </service>
+
+    </model>
+
+</mule>

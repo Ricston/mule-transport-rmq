@@ -1,0 +1,1 @@
+See http://ricston.com/blog/?p=799 for more info on the RabbitMQ Mule transport.

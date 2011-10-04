@@ -6,8 +6,8 @@
 	<groupId>org.mule.transports</groupId>
 	<artifactId>mule-transport-rmq</artifactId>
 	<packaging>jar</packaging>
-	<name>Mule Rmq Transport</name>
-	<version>1.1-SNAPSHOT</version>
+	<name>Mule RabbitMQ Transport</name>
+	<version>3.1-SNAPSHOT</version>
 	<description>This is a Mule transport for RabbitMQ, compatible with RabbitMQ server 2.0.0</description>
 
 	<properties>

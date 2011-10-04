@@ -8,7 +8,7 @@
 	<packaging>jar</packaging>
 	<name>Mule RabbitMQ Transport</name>
 	<version>3.1-SNAPSHOT</version>
-	<description>This is a Mule transport for RabbitMQ, compatible with RabbitMQ server 2.0.0</description>
+	<description>This is a Mule transport for RabbitMQ, compatible with RabbitMQ server 2.1.0</description>
 
 	<properties>
 		<mule.version>2.2.1</mule.version>
